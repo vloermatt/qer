@@ -1,0 +1,99 @@
+service: qer
+frameworkVersion: "3"
+useDotenv: true
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-plugin-monorepo
+  - serverless-dotenv-plugin
+  - serverless-plugin-common-excludes
+  - serverless-plugin-include-dependencies
+
+package:
+  individually: true
+custom:
+  includeDependencies:
+    enableCaching: true
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  environment:
+    USER_POOL_ID: { Ref: UserPool }
+    CLIENT_ID: { Ref: UserClient }
+    DEPLOY_STAGE: ${env:DEPLOY_STAGE}
+
+functions:
+  # ----------- TRPC API ------------
+  # Authorised via Cognito User Pools
+  trpc:
+    handler: src/functions/trpc/src/index.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
+  # ----- Post Confirmation Lambda Function ----
+  # Triggered by Cognito User validations
+  postConfirmation:
+    handler: src/functions/post-confirmation/src/index.handler
+    events:
+      - cognitoUserPool:
+          pool: vector-logistics-${env:DEPLOY_STAGE}
+          trigger: PostConfirmation
+          existing: true
+          forceDeploy: true
+
+resources:
+  Resources:
+    # -------------- Cognito User Pool -------------------
+    # Includes password policy config
+    # Attributes, existing and custom, can be edited or added via the schema
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: vector-logistics-${env:DEPLOY_STAGE}
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireUppercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            TemporaryPasswordValidityDays: 1
+        AutoVerifiedAttributes: ["email"]
+
+    UserClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: user-pool-ui
+        GenerateSecret: false
+        UserPoolId: { Ref: UserPool }
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        ExplicitAuthFlows:
+          - "ADMIN_NO_SRP_AUTH"
+
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
