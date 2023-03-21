@@ -49,7 +49,7 @@ functions:
     handler: src/functions/post-confirmation/src/index.handler
     events:
       - cognitoUserPool:
-          pool: vector-logistics-${env:DEPLOY_STAGE}
+          pool: qer-${env:DEPLOY_STAGE}
           trigger: PostConfirmation
           existing: true
           forceDeploy: true
@@ -62,7 +62,7 @@ resources:
     UserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: vector-logistics-${env:DEPLOY_STAGE}
+        UserPoolName: qer-${env:DEPLOY_STAGE}
         Schema:
           - Name: email
             Required: true

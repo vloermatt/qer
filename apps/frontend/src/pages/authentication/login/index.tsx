@@ -14,22 +14,25 @@ import {
   FormErrorMessage,
   InputGroup,
   InputRightElement,
+  Text,
 } from "@chakra-ui/react";
 import { Formik, Field } from "formik";
-import { useAuthContext } from "../../context/AuthProvider";
+import { useAuthContext } from "../../../context/AuthProvider";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
 import { AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js";
-import { userPool } from "../../context/AuthProvider/cognito";
+import { userPool } from "../../../context/AuthProvider/cognito";
 import {
   ADMIN_GROUPS,
   AUTH_RESPONSE_TYPES,
   AUTH_USER_TOKEN_KEY,
-} from "../../utils/constants";
+} from "../../../utils/constants";
 import jwtDecode from "jwt-decode";
 import { BiShow, BiHide } from "react-icons/bi";
-import colors from "../../theme/colors";
+import colors from "../../../theme/colors";
 import { useState } from "react";
+import Lottie from "lottie-react";
+import infoScan from "../../../assets/animations/info-scan.json";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -124,12 +127,14 @@ const Login = () => {
       minH={"100vh"}
       align={"center"}
       justify={"center"}
+      minW={"100vw"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
-          <Heading lineHeight={1.1} fontSize={{ base: "2xl", md: "2xl" }}>
-            Vector Logistics Admin Portal
+          <Lottie animationData={infoScan} loop={false} />
+          <Heading lineHeight={1.1} fontSize={"5xl"}>
+            Q-ER
           </Heading>
           <Heading fontSize={"4xl"}>Sign in to your account</Heading>
         </Stack>
@@ -198,6 +203,18 @@ const Login = () => {
                       <Link color={colors.primary.blue} href="/password/reset">
                         Forgot password?
                       </Link>
+                    </Stack>
+                    <Stack
+                      direction={{ base: "column", sm: "row" }}
+                      align={"center"}
+                      justify={"center"}
+                    >
+                      <Text>
+                        Don't have an account yet?{" "}
+                        <Link color={colors.primary.blue} href="/signup">
+                          Sign Up
+                        </Link>
+                      </Text>
                     </Stack>
                     <Button
                       variant="solid"
