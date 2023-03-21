@@ -1,0 +1,17 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "scripts": {
+    "migrate": "prisma migrate dev",
+    "post-migrate": "sh export-schema.sh && yarn prisma:generate",
+    "prisma:generate": "prisma generate",
+    "deploy": "npx prisma migrate deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "prisma": "^4.11.0"
+  }
+}

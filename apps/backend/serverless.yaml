@@ -11,6 +11,8 @@ plugins:
 
 package:
   individually: true
+  patterns:
+    - "node_modules/.prisma/**"
 custom:
   includeDependencies:
     enableCaching: true
