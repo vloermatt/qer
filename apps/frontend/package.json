@@ -9,8 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.5.2",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "amazon-cognito-identity-js": "^6.1.2",
+    "formik": "^2.2.9",
+    "framer-motion": "^10.6.1",
+    "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
+    "react-router": "^6.9.0",
+    "react-router-dom": "^6.9.0",
+    "recoil": "^0.7.7",
+    "recoil-persist": "^4.2.0",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
